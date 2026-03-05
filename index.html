@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antrean Real-time Bingxue</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #f4f4f4; margin: 0; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; margin: auto; text-align: left; }
+        .logo { font-weight: bold; font-size: 24px; color: #333; margin-bottom: 20px; text-align: center; }
+        .status-box { padding: 20px; border-radius: 10px; margin: 20px 0; font-weight: bold; transition: 0.5s; text-align: center; }
+        .preparing { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .ready { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; animation: shake 0.5s infinite; }
+        .order-number { font-size: 48px; display: block; margin: 10px 0; text-align: center; }
+        
+        .details { border-top: 1px dashed #ccc; padding-top: 15px; margin-top: 20px; font-size: 14px; color: #555; }
+        .item-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .total-row { display: flex; justify-content: space-between; font-weight: bold; color: #000; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
+        
+        @keyframes shake { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        
+        #mute-btn { display: none; margin-top: 15px; padding: 12px; border: none; background: #ff4d4d; color: white; cursor: pointer; border-radius: 5px; font-weight: bold; width: 100%; }
+        #mute-btn:disabled { background: #ccc; }
+        .simulasi-btn { margin-top: 20px; padding: 10px; border: none; background: #eee; cursor: pointer; border-radius: 5px; font-size: 10px; color: #999; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">BINGXUE</div>
+        <p style="text-align: center; margin-bottom: 5px;">Nomor Antrean Anda:</p>
+        <strong class="order-number">#103</strong>
+
+        <p style="text-align: center; font-size: 14px; color: #666; margin-top: -10px;">
+            Antrean saat ini: <span id="current-serving" style="font-weight: bold; color: #ff4d4d;">#100</span>
+        </p>
+        
+        <div id="status" class="status-box preparing">
+            PESANAN SEDANG DISIAPKAN...
+        </div>
+
+        <div class="details">
+            <p style="font-weight: bold; margin-bottom: 10px;">Rincian Pesanan:</p>
+            <div class="item-row">
+                <span>2 * Ice Cream Mix</span>
+                <span>16.000</span>
+            </div>
+            <div class="item-row">
+                <span>1 * Ice Cream Vanilla</span>
+                <span>8.000</span>
+            </div>
+            <div class="total-row">
+                <span>Total</span>
+                <span>24.000</span>
+            </div>
+            <p style="font-size: 11px; margin-top: 10px; color: #888;">2026-02-26 | 11:29:59</p>
+        </div>
+
+        <button onclick="simulasiSiap()" class="simulasi-btn">(Simulasi Pesanan Siap)</button>
+        <button id="mute-btn" onclick="matikanSuara()">Brisik y? mute aj</button>
+    </div>
+
+    <script>
+        let audio;
+
+        let servingNumber = 100;
+        const servingElement = document.getElementById('current-serving');
+        
+        const antreanInterval = setInterval(() => {
+            if (servingNumber < 102) { 
+                servingNumber++;
+                servingElement.innerText = "#" + servingNumber;
+            } else {
+                clearInterval(antreanInterval);
+            }
+        }, 5000); 
+
+        function simulasiSiap() {
+            const statusBox = document.getElementById('status');
+            const muteBtn = document.getElementById('mute-btn');
+            
+            clearInterval(antreanInterval);
+            servingElement.innerText = "#103";
+            
+            statusBox.innerText = "PESANAN SIAP DIAMBIL!";
+            statusBox.className = "status-box ready";
+            
+            muteBtn.style.display = "block";
+
+            if (!audio) {
+                audio = new Audio('eskrim.mp3');
+                audio.loop = true;
+            }
+            audio.play();
+            
+            if (navigator.vibrate) {
+                navigator.vibrate([500, 200, 500, 200, 500]);
+            }
+        }
+
+        function matikanSuara() {
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+                const muteBtn = document.getElementById('mute-btn');
+                muteBtn.innerText = "lngsng ambil y";
+                muteBtn.disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>
